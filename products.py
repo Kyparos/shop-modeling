@@ -11,6 +11,7 @@ class Product:
         self.name = name if name is not None else f'Product{rng.integers(1, 10 ** NUM_NAME):0{NUM_NAME}}'
         self.amount = amount
         self.cost = cost
+        self.types = set()
 
     def __repr__(self):
         return f'<{self.name} | {self.amount}, {self.cost}>'

@@ -25,7 +25,24 @@ class Stockpile:
         return product.amount < self.get_free_space()
 
 
+class DedicatedStockpile(Stockpile):
+    def __init__(self, capacity, product_types=None, contains=None, name=None):
+        super().__init__(capacity, contains, name)
+        if product_types is None:
+            self.product_types = set()
+
+    def product_fits(self, product: Product):
+        condition_1 = product.amount < self.get_free_space()
+        condition_2 = len(product.types / self.product_types) == 0
+        return condition_1 and condition_2
+
+
 class Display(Stockpile):
     def __init__(self, capacity, contains=None, name=None):
         super().__init__(capacity, contains=[], name=None)
-        self.is_visitor_accessible = False
+        self.is_visitor_accessible = True
+
+
+class DedicatedDisplay(DedicatedStockpile, Display):
+    def __init__(self, capacity, product_types=None, contains=None, name=None):
+        super().__init__(capacity, product_types, contains, name)
