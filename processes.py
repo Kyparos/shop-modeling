@@ -1,8 +1,8 @@
 import numpy as np
-from settings import PROCCESSES_DEFAULT_RNG
+from settings import PROCESSES_DEFAULT_RNG
 from humans import Customer
 
-rng = np.random.default_rng(PROCCESSES_DEFAULT_RNG)
+rng = np.random.default_rng(PROCESSES_DEFAULT_RNG)
 
 
 def poisson(lambda_=1):

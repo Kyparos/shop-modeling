@@ -24,21 +24,37 @@ class Shop:
         self.stockpiles = stockpiles
         self.action = env.process(self.run())
         self.assortiment = assortiment
+        self.revenue_history = []
+        self.customer_history = []
+        self.day = 0
+        self.revenue = 0
+        self.customers_amount = 0
         logging.info('Shop created')
 
     def run(self):
         while True:
+            if self.env.now == 23:
+                logging.info(f'day: {self.day}, revenue: {self.revenue}, customers visited: {self.customers_amount}')
+                self.revenue_history.append(self.revenue)
+                self.customer_history.append(self.customers_amount)
+                self.revenue = 0
+                self.customers_amount = 0
             if self.work_hours[0] <= self.env.now < self.work_hours[1]:
                 yield self.env.process(self.sell())
             else:
                 yield self.env.process(self.closed())
 
     def sell(self):
+        sold = 0
+
         for c in next(self.cgenerator):
             if not c:
                 break
             shopping_list = c.create_shopping_list(self.assortiment)
             receipt = self.stockpiles.get(shopping_list)
+            sold += receipt.amount.dot(self.assortiment.apply(lambda x: x.cost))
+            self.customers_amount += 1
+        self.revenue += sold
         yield self.env.timeout(1)
 
     def closed(self):
