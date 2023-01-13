@@ -1,4 +1,7 @@
+import logging
+
 import numpy as np
+import pandas as pd
 from products import Product
 from settings import STOCKS_DEFAULT_RNG, STOCKS_DEFAULT_N_DIGITS_IN_NAME
 
@@ -9,11 +12,17 @@ rng = np.random.default_rng(STOCKS_DEFAULT_RNG)
 class Stockpile:
     def __init__(self, capacity, contains=None, name=None):
         if contains is None:
-            contains = []
+            contains = pd.DataFrame(columns=['products', 'amount'])
         self.name = name if name is not None else f'Stockpile{rng.integers(1, 10 ** NUM_NAME):0{NUM_NAME}}'
         self.capacity = capacity
         self.contains = contains
         self.is_visitor_accessible = False
+
+    def get(self, shopping_list: pd.DataFrame):
+        shopping_list = shopping_list.copy()
+        shopping_list['amount'] = np.min([shopping_list['amount'], self.contains['amount']], axis=0)
+        self.contains['amount'] -= shopping_list['amount']
+        return shopping_list
 
     def get_taken_space(self):
         return sum(list(map(lambda x: x.size, self.contains)))

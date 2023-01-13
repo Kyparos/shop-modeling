@@ -20,7 +20,7 @@ def poisson(lambda_=1):
             s_i += 1
 
 
-def customer_generator(process=poisson(), customer_class=Customer):
+def customer_generator(process=poisson(), customer_class=Customer) -> Customer:
     total = 0
     for p in process:
         yield [customer_class() for i in range(p-total)]
